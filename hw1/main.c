@@ -11,82 +11,86 @@
 #include "stdio.h"
 #include "stdlib.h"
 #include "string.h"
+#include "stdbool.h"
+#include "assert.h"
 
-const char INPUT_FILE_PATH[] = "input1.txt";
+#include "string_list.h"
 
-struct lnode {
-    char *s;
-    int len;
-    struct lnode *next;
-};
+const char INPUT_FILE_PATH[] = "input2.txt";
 
-void free_list(struct lnode *head) {
-    struct lnode *cur, *temp;
-    cur = head;
-
-    while (cur != NULL) {
-        temp = cur;
-        free(cur->s);
-        cur = cur->next;
-        free(temp);
+bool has_email(char *s, int len) {
+    if (len < 0) {
+        len = strlen(s);
     }
-}
+    bool correct_email = false;
+    for (int i = 1; i < len - 2; i++) {
+        if (s[i] == 0) {
+            break;
+        }
 
-int read_file_to_list(struct lnode **head, const char *fpath) {
-    FILE *fp;
-    fp = fopen(fpath, "r");
-    if (fp == NULL) {
-        printf("ERROR: Unable to open file %s", fpath);
-        return -1;
-    }
-
-    char c;
-    int list_len = 0;
-    char *buf = malloc(1024 * sizeof(char*));
-    *head = malloc(sizeof(struct lnode));
-    struct lnode *cur = *head;
-    int len = 0;
-    while ((c = fgetc(fp)) != EOF && len < 1024 * sizeof(char*)) {
-        buf[len++] = c;
-        if (c == 10) {
-            buf[len] = 0;
-
-            cur->len = len;
-            cur->s = malloc(len * sizeof(char));
-            cur->next = malloc(sizeof(struct lnode));
-            cur->next->next = NULL;
-            strncpy(cur->s, buf, len);
-            list_len++;
-            cur = cur->next;
-
-            len = 0;
+        if (s[i - 1] != ' ' && s[i - 1] != '@' && s[i] == '@' && s[i + 1] != '@' && s[i + 1] != '.') {
+            correct_email = true;
+        } else if (s[i] == ' ') {
+            correct_email = false;
+        } else if (s[i] == '.' && s[i + 1] != ' ' && correct_email) {
+            return true;
         }
     }
-    free(buf);
-    fclose(fp);
-
-    return list_len;
+    return false;
 }
 
-struct lnode* filter_strings_with_email(struct lnode *head, int list_len) {
-    return head;
+int filter_strings_with_email(struct lnode **filtered_head, struct lnode *cur) {
+    struct lnode *new_head, *new_cur;
+    new_head = malloc(sizeof(struct lnode));
+    new_head->next = NULL;
+    new_cur = new_head;
+
+    int filtered_len = 0;
+    while (cur != NULL) {
+        if (has_email(cur->s, cur->len)) {
+            new_cur->next = malloc(sizeof(struct lnode));
+            new_cur = new_cur->next;
+            new_cur->s = malloc(cur->len * sizeof(char));
+            strncpy(new_cur->s, cur->s, cur->len * sizeof(char));
+            new_cur->len = cur->len;
+            new_cur->next = NULL;
+            filtered_len++;
+        }
+        cur = cur->next;
+    }
+
+    new_cur = new_head->next;
+    free(new_head);
+
+    *filtered_head = new_cur;
+    return filtered_len;
+}
+
+void test() {
+    assert(has_email("support@mail.ru", -1) == true);
+    assert(has_email("@.ru", 4) == false);
+    assert(has_email("asdf sadf asdfas dfasd @asfdsa.ru", -1) == false);
+    assert(has_email("kl@lk.ru fasdfasdfasdfasd", -1) == true);
+    assert(has_email("@@@@@@@@@@@lk@mail.ru", -1) == true);
+    assert(has_email("  sdafas  sadf@@t.ru", -1) == false);
+    assert(has_email("@@.ru", -1) == false);
+    assert(has_email("@test.ru asdfasd fas d", -1) == false);
+    assert(has_email("@", -1) == false);
 }
 
 int main() {
+    test();
+
     struct lnode *all_strings_head, *filtered_strings_head, *cur;
     int list_len = read_file_to_list(&all_strings_head, INPUT_FILE_PATH);
 
-    printf("%d\n", list_len);
+    int filtered_strings_amount = filter_strings_with_email(&filtered_strings_head, all_strings_head);
 
-    filtered_strings_head = filter_strings_with_email(all_strings_head, list_len);
-
-    cur = all_strings_head;
-    while (cur->next != NULL) {
-        printf("%s", cur->s);
-        cur = cur->next;
-    }
+    printf("There are %d lines with email:\n", filtered_strings_amount);
+    print_list(filtered_strings_head);
 
     free_list(all_strings_head);
+    free_list(filtered_strings_head);
 
     return 0;
 }

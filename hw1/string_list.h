@@ -1,3 +1,7 @@
+/*
+Copyright 2020 KoroLion (github.com/KoroLion)
+*/
+
 #ifndef STRING_LIST_H
 #define STRING_LIST_H
 

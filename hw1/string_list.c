@@ -1,8 +1,12 @@
-#include "stdio.h"
-#include "stdlib.h"
-#include "string.h"
+/*
+Copyright 2020 KoroLion (github.com/KoroLion)
+*/
 
-#include "string_list.h"
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+#include "./string_list.h"
 
 int read_file_to_list(struct lnode **head, const char *fpath) {
     FILE *fp;

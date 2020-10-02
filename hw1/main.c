@@ -1,20 +1,22 @@
-/* Вариант #66
+/*
+Вариант #66
 Составить программу построчной фильтрации текста, вводимого пользователем.
 Суть фильтра — отбор строк, содержащих адреса электронной почты.
 Фильтр должен быть реализован как функция, принимающая на вход указатель на вектор строк, их количество и указатель на результирующую структуру.
 На выход функция должна возвращать количество строк в результирующей структуре.
 Результат обработки выводится на экран.
-
-Автор - Артем Королев
+*/
+/*
+Copyright 2020 KoroLion (github.com/KoroLion)
 */
 
-#include "stdio.h"
-#include "stdlib.h"
-#include "string.h"
-#include "stdbool.h"
-#include "assert.h"
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <stdbool.h>
+#include <assert.h>
 
-#include "string_list.h"
+#include "./string_list.h"
 
 const char INPUT_FILE_PATH[] = "input2.txt";
 
@@ -28,7 +30,8 @@ bool has_email(char *s, int len) {
             break;
         }
 
-        if (s[i - 1] != ' ' && s[i - 1] != '@' && s[i] == '@' && s[i + 1] != '@' && s[i + 1] != '.') {
+        bool has_correct_at = s[i - 1] != '@' && s[i] == '@' && s[i + 1] != '@';
+        if (s[i - 1] != ' ' && has_correct_at && s[i + 1] != '.') {
             correct_email = true;
         } else if (s[i] == ' ') {
             correct_email = false;
@@ -39,7 +42,7 @@ bool has_email(char *s, int len) {
     return false;
 }
 
-int filter_strings_with_email(struct lnode **filtered_head, struct lnode *cur) {
+int filter_lines_with_email(struct lnode **filtered_head, struct lnode *cur) {
     struct lnode *new_head, *new_cur;
     new_head = malloc(sizeof(struct lnode));
     new_head->next = NULL;
@@ -81,16 +84,16 @@ void test() {
 int main() {
     test();
 
-    struct lnode *all_strings_head, *filtered_strings_head, *cur;
-    int list_len = read_file_to_list(&all_strings_head, INPUT_FILE_PATH);
+    struct lnode *all_lns_head, *flt_lns_head, *cur;
+    int list_len = read_file_to_list(&all_lns_head, INPUT_FILE_PATH);
 
-    int filtered_strings_amount = filter_strings_with_email(&filtered_strings_head, all_strings_head);
+    int flt_lns_amount = filter_lines_with_email(&flt_lns_head, all_lns_head);
 
-    printf("There are %d lines with email:\n", filtered_strings_amount);
-    print_list(filtered_strings_head);
+    printf("There are %d lines with email:\n", flt_lns_amount);
+    print_list(flt_lns_head);
 
-    free_list(all_strings_head);
-    free_list(filtered_strings_head);
+    free_list(all_lns_head);
+    free_list(flt_lns_head);
 
     return 0;
 }

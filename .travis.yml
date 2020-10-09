@@ -1,2 +1,8 @@
 language: c
 script: make && make test
+cache: packages
+
+addons:
+  apt:
+    packages:
+      - valgrind

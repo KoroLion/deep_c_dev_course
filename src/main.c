@@ -18,7 +18,7 @@ Copyright 2020 KoroLion (github.com/KoroLion)
 
 #include "./string_list.h"
 
-const char INPUT_FILE_PATH[] = "input2.txt";
+const char INPUT_FILE_PATH[] = "input3.txt";
 
 bool has_email(char *s, int len) {
     if (len < 0) {
@@ -44,18 +44,19 @@ bool has_email(char *s, int len) {
 
 int filter_lines_with_email(struct lnode **filtered_head, struct lnode *cur) {
     struct lnode *new_head, *new_cur;
-    new_head = malloc(sizeof(struct lnode));
+    new_head = malloc(sizeof(*new_head));
     new_head->next = NULL;
     new_cur = new_head;
 
     int filtered_len = 0;
     while (cur != NULL) {
         if (has_email(cur->s, cur->len)) {
-            new_cur->next = malloc(sizeof(struct lnode));
+            new_cur->next = malloc(sizeof(*new_cur));
             new_cur = new_cur->next;
-            new_cur->s = malloc(cur->len * sizeof(char));
-            strncpy(new_cur->s, cur->s, cur->len * sizeof(char));
+
             new_cur->len = cur->len;
+            new_cur->s = malloc(new_cur->len * sizeof(*(new_cur->s)));
+            strncpy(new_cur->s, cur->s, cur->len);
             new_cur->next = NULL;
             filtered_len++;
         }
@@ -64,8 +65,8 @@ int filter_lines_with_email(struct lnode **filtered_head, struct lnode *cur) {
 
     new_cur = new_head->next;
     free(new_head);
-
     *filtered_head = new_cur;
+
     return filtered_len;
 }
 
@@ -84,8 +85,8 @@ void test() {
 int main() {
     test();
 
-    struct lnode *all_lns_head, *flt_lns_head, *cur;
-    int list_len = read_file_to_list(&all_lns_head, INPUT_FILE_PATH);
+    struct lnode *all_lns_head, *flt_lns_head;
+    read_file_to_list(&all_lns_head, INPUT_FILE_PATH);
 
     int flt_lns_amount = filter_lines_with_email(&flt_lns_head, all_lns_head);
 

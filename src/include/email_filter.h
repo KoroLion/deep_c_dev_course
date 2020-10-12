@@ -2,8 +2,8 @@
 Copyright 2020 KoroLion (github.com/KoroLion)
 */
 
-#ifndef SRC_EMAIL_FILTER_H_
-#define SRC_EMAIL_FILTER_H_
+#ifndef SRC_INCLUDE_EMAIL_FILTER_H_
+#define SRC_INCLUDE_EMAIL_FILTER_H_
 
 bool has_email(char *s, int len);
 int filter_lines_with_email(
@@ -12,4 +12,4 @@ int filter_lines_with_email(
     struct lnode **filtered_head
 );
 
-#endif  // SRC_EMAIL_FILTER_H_
+#endif  // SRC_INCLUDE_EMAIL_FILTER_H_

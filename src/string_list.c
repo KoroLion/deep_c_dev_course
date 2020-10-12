@@ -5,11 +5,36 @@ Copyright 2020 KoroLion (github.com/KoroLion)
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <stdbool.h>
 
 #include "include/string_list.h"
 
 const int DEFAULT_BUF_LEN = 1024;
 const int MAX_OUTPUT_LEN = 512;
+
+bool add_to_list(struct lnode *cur, const char *s, const int len) {
+    struct lnode *prev;
+    while (cur != NULL) {
+        prev = cur;
+        cur = cur->next;
+    }
+
+    prev->next = malloc(sizeof(*prev));
+    cur = prev->next;
+    if (cur == NULL) {
+        return false;
+    }
+
+    cur->len = len;
+    cur->s = malloc(len * sizeof(*(cur->s)));
+    if (cur->s == NULL) {
+        return false;
+    }
+    cur->next = NULL;
+    strncpy(cur->s, s, len);
+
+    return true;
+}
 
 void free_used(FILE *fp, char *buf, struct lnode *head) {
     fclose(fp);
@@ -50,26 +75,26 @@ int read_file_to_list(struct lnode **head, const char *fpath) {
         buf[len++] = c;
         if (c == 10) {
             buf[len++] = 0;  // NULL terminating the string
-            cur->next = malloc(sizeof(*cur));
-            if (cur->next == NULL) {
+
+            if (!add_to_list(cur, buf, len)) {
                 free_used(fp, buf, *head);
                 return -2;
             }
             cur = cur->next;
 
-            cur->len = len;
-            cur->s = malloc(len * sizeof(*(cur->s)));
-            if (cur->s == NULL) {
-                free_used(fp, buf, *head);
-                return -2;;
-            }
-            cur->next = NULL;
-            strncpy(cur->s, buf, len);
-
             list_len++;
-
             len = 0;
         }
+    }
+    // last line could be without \n, adding it
+    if (len > 0) {
+        buf[len++] = '\n';
+        buf[len++] = 0;
+        if (!add_to_list(cur, buf, len)) {
+            free_used(fp, buf, *head);
+            return -2;
+        }
+        list_len++;
     }
     free(buf);
     fclose(fp);
@@ -85,20 +110,21 @@ void print_list(struct lnode* cur) {
     while (cur != NULL) {
         // if string is too big => cropping it
         if (strlen(cur->s) > MAX_OUTPUT_LEN) {
-          char *buf = malloc((MAX_OUTPUT_LEN + 1) * sizeof(*buf));
-          buf[MAX_OUTPUT_LEN] = 0;
-          strncpy(buf, cur->s, MAX_OUTPUT_LEN);
-          printf("%s...\n", buf);
-          free(buf);
+            char *buf = malloc((MAX_OUTPUT_LEN + 1) * sizeof(*buf));
+            buf[MAX_OUTPUT_LEN] = 0;
+            strncpy(buf, cur->s, MAX_OUTPUT_LEN);
+            printf("%s...\n", buf);
+            free(buf);
         } else {
-          printf("%s", cur->s);
+            printf("%s", cur->s);
         }
         cur = cur->next;
     }
 }
 
-void free_list(struct lnode *head) {
+int free_list(struct lnode *head) {
     struct lnode *cur, *temp;
+    int freed_amount = 0;
     cur = head;
 
     while (cur != NULL) {
@@ -106,5 +132,8 @@ void free_list(struct lnode *head) {
         free(cur->s);
         cur = cur->next;
         free(temp);
+        freed_amount++;
     }
+
+    return freed_amount;
 }

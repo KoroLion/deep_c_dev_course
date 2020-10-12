@@ -2,8 +2,8 @@
 Copyright 2020 KoroLion (github.com/KoroLion)
 */
 
-#ifndef STRING_LIST_H
-#define STRING_LIST_H
+#ifndef SRC_STRING_LIST_H_
+#define SRC_STRING_LIST_H_
 
 struct lnode {
     char *s;
@@ -15,4 +15,4 @@ int read_file_to_list(struct lnode**, const char* fpath);
 void print_list(struct lnode*);
 void free_list(struct lnode*);
 
-#endif /* STRING_LIST_H */
+#endif  // SRC_STRING_LIST_H_

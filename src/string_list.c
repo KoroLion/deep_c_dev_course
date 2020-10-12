@@ -6,7 +6,7 @@ Copyright 2020 KoroLion (github.com/KoroLion)
 #include <stdlib.h>
 #include <string.h>
 
-#include "./string_list.h"
+#include "include/string_list.h"
 
 const int DEFAULT_BUF_LEN = 1024;
 const int MAX_OUTPUT_LEN = 512;
@@ -42,7 +42,7 @@ int read_file_to_list(struct lnode **head, const char *fpath) {
 
         buf[len++] = c;
         if (c == 10) {
-            buf[len++] = 0; // NULL terminating the string
+            buf[len++] = 0;  // NULL terminating the string
             cur->next = malloc(sizeof(*cur));
             if (cur->next == NULL) {
                 free_list(*head);

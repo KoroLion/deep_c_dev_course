@@ -1,8 +1,0 @@
-s1
-s2
-s3 ya@w.ru
-s4 ya@.ku
-s ya@.ku ya@.ku 5
-s ya@.ku wolf@a.ru asfdasf as
-test@test.ru dsg3
-saf

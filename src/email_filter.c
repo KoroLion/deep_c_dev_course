@@ -6,8 +6,8 @@ Copyright 2020 KoroLion (github.com/KoroLion)
 #include <stdbool.h>
 #include <string.h>
 
-#include "./string_list.h"
-#include "./email_filter.h"
+#include "include/string_list.h"
+#include "include/email_filter.h"
 
 bool has_email(char *s, int len) {
     if (len < 0) {
@@ -31,7 +31,9 @@ bool has_email(char *s, int len) {
     return false;
 }
 
-int filter_lines_with_email(struct lnode *cur, int lines_amount, struct lnode **filtered_head) {
+int filter_lines_with_email(struct lnode *cur,
+                            int lines_amount,
+                            struct lnode **filtered_head) {
     struct lnode *new_head, *new_cur;
     new_head = malloc(sizeof(*new_head));
     if (new_head == NULL) {

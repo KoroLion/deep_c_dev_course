@@ -8,4 +8,5 @@ addons:
     packages:
       - valgrind
       - check
+      - cppcheck
       - python3-pip

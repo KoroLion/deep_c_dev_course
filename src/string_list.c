@@ -11,6 +11,12 @@ Copyright 2020 KoroLion (github.com/KoroLion)
 const int DEFAULT_BUF_LEN = 1024;
 const int MAX_OUTPUT_LEN = 512;
 
+void free_used(FILE *fp, char *buf, struct lnode *head) {
+    fclose(fp);
+    free(buf);
+    free_list(head);
+}
+
 int read_file_to_list(struct lnode **head, const char *fpath) {
     FILE *fp;
     fp = fopen(fpath, "r");
@@ -20,10 +26,10 @@ int read_file_to_list(struct lnode **head, const char *fpath) {
 
     char c;
     int list_len = 0;
-    char *buf = malloc(1024 * sizeof(*buf));
+    char *buf = malloc(1024 * sizeof(*buf)), *old_buf;
     *head = malloc(sizeof(**head));
     if (*head == NULL) {
-        free_list(*head);
+        free_used(fp, buf, *head);
         return -2;
     }
     (*head)->next = NULL;
@@ -33,9 +39,10 @@ int read_file_to_list(struct lnode **head, const char *fpath) {
         // double buffer if there is not enough space
         if (len == max_len) {
             max_len *= 2;
+            old_buf = buf;
             buf = realloc(buf, max_len);
             if (buf == NULL) {
-                free_list(*head);
+                free_used(fp, old_buf, *head);
                 return -2;
             }
         }
@@ -45,7 +52,7 @@ int read_file_to_list(struct lnode **head, const char *fpath) {
             buf[len++] = 0;  // NULL terminating the string
             cur->next = malloc(sizeof(*cur));
             if (cur->next == NULL) {
-                free_list(*head);
+                free_used(fp, buf, *head);
                 return -2;
             }
             cur = cur->next;
@@ -53,7 +60,7 @@ int read_file_to_list(struct lnode **head, const char *fpath) {
             cur->len = len;
             cur->s = malloc(len * sizeof(*(cur->s)));
             if (cur->s == NULL) {
-                free_list(*head);
+                free_used(fp, buf, *head);
                 return -2;;
             }
             cur->next = NULL;

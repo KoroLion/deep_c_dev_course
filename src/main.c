@@ -18,15 +18,20 @@ Copyright 2020 KoroLion (github.com/KoroLion)
 #include "include/string_list.h"
 #include "include/email_filter.h"
 
-const char INPUT_FILE_PATH[] = "test_data.txt";
+int main(int argc, char **argv) {
+    if (argc != 2) {
+        printf("Usage: ./<bin> <path_to_file_with_emails>\n");
+        return 1;
+    }
 
-int main() {
+    const char *input_file_path = argv[1];
+
     struct lnode *all_lns_head, *flt_lns_head;
 
-    int all_lns_amount = read_file_to_list(&all_lns_head, INPUT_FILE_PATH);
+    int all_lns_amount = read_file_to_list(&all_lns_head, input_file_path);
     if (all_lns_amount < 0) {
         if (all_lns_amount == -1) {
-            printf("ERROR: Unable to open file %s\n", INPUT_FILE_PATH);
+            printf("ERROR: Unable to open file %s\n", input_file_path);
             return 1;
         } else if (all_lns_amount == -2) {
             printf("ERROR: Not enough memory!\n");

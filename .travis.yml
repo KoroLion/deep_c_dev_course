@@ -1,4 +1,5 @@
 language: c
+install: pip3 install cpplint
 script: make && make test
 cache: packages
 
@@ -7,3 +8,4 @@ addons:
     packages:
       - valgrind
       - check
+      - python3-pip

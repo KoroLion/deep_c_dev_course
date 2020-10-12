@@ -17,78 +17,29 @@ Copyright 2020 KoroLion (github.com/KoroLion)
 #include <assert.h>
 
 #include "./string_list.h"
+#include "./email_filter.h"
 
 const char INPUT_FILE_PATH[] = "input3.txt";
 
-bool has_email(char *s, int len) {
-    if (len < 0) {
-        len = strlen(s);
-    }
-    bool correct_email = false;
-    for (int i = 1; i < len - 2; i++) {
-        if (s[i] == 0) {
-            break;
-        }
-
-        bool has_correct_at = s[i - 1] != '@' && s[i] == '@' && s[i + 1] != '@';
-        if (s[i - 1] != ' ' && has_correct_at && s[i + 1] != '.') {
-            correct_email = true;
-        } else if (s[i] == ' ') {
-            correct_email = false;
-        } else if (s[i] == '.' && s[i + 1] != ' ' && correct_email) {
-            return true;
-        }
-    }
-    return false;
-}
-
-int filter_lines_with_email(struct lnode **filtered_head, struct lnode *cur) {
-    struct lnode *new_head, *new_cur;
-    new_head = malloc(sizeof(*new_head));
-    new_head->next = NULL;
-    new_cur = new_head;
-
-    int filtered_len = 0;
-    while (cur != NULL) {
-        if (has_email(cur->s, cur->len)) {
-            new_cur->next = malloc(sizeof(*new_cur));
-            new_cur = new_cur->next;
-
-            new_cur->len = cur->len;
-            new_cur->s = malloc(new_cur->len * sizeof(*(new_cur->s)));
-            strncpy(new_cur->s, cur->s, cur->len);
-            new_cur->next = NULL;
-            filtered_len++;
-        }
-        cur = cur->next;
-    }
-
-    new_cur = new_head->next;
-    free(new_head);
-    *filtered_head = new_cur;
-
-    return filtered_len;
-}
-
-void test() {
-    assert(has_email("support@mail.ru", -1) == true);
-    assert(has_email("@.ru", 4) == false);
-    assert(has_email("asdf sadf asdfas dfasd @asfdsa.ru", -1) == false);
-    assert(has_email("kl@lk.ru fasdfasdfasdfasd", -1) == true);
-    assert(has_email("@@@@@@@@@@@lk@mail.ru", -1) == true);
-    assert(has_email("  sdafas  sadf@@t.ru", -1) == false);
-    assert(has_email("@@.ru", -1) == false);
-    assert(has_email("@test.ru asdfasd fas d", -1) == false);
-    assert(has_email("@", -1) == false);
-}
-
 int main() {
-    test();
-
     struct lnode *all_lns_head, *flt_lns_head;
-    read_file_to_list(&all_lns_head, INPUT_FILE_PATH);
+    
+    int all_lns_amount;
+    if ((all_lns_amount = read_file_to_list(&all_lns_head, INPUT_FILE_PATH)) < 0) {
+        if (all_lns_amount == -1) {
+            printf("ERROR: Unable to open file %s\n", INPUT_FILE_PATH);
+            return 1;
+        } else if (all_lns_amount == -2) {
+            printf("ERROR: Not enough memory!\n");
+            return 1;
+        }
+    }
 
-    int flt_lns_amount = filter_lines_with_email(&flt_lns_head, all_lns_head);
+    int flt_lns_amount = filter_lines_with_email(all_lns_head, all_lns_amount, &flt_lns_head);
+    if (flt_lns_amount < 0) {
+        printf("ERROR: Not enough memory!\n");
+        return 1;
+    }
 
     printf("There are %d lines with email:\n", flt_lns_amount);
     print_list(flt_lns_head);

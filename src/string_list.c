@@ -15,7 +15,6 @@ int read_file_to_list(struct lnode **head, const char *fpath) {
     FILE *fp;
     fp = fopen(fpath, "r");
     if (fp == NULL) {
-        printf("ERROR: Unable to open file %s", fpath);
         return -1;
     }
 
@@ -23,24 +22,40 @@ int read_file_to_list(struct lnode **head, const char *fpath) {
     int list_len = 0;
     char *buf = malloc(1024 * sizeof(*buf));
     *head = malloc(sizeof(**head));
+    if (*head == NULL) {
+        free_list(*head);
+        return -2;
+    }
     (*head)->next = NULL;
     struct lnode *cur = *head;
     int len = 0, max_len = DEFAULT_BUF_LEN;
     while ((c = fgetc(fp)) != EOF) {
         // double buffer if there is not enough space
         if (len == max_len) {
-          max_len *= 2;
-          buf = realloc(buf, max_len);
+            max_len *= 2;
+            buf = realloc(buf, max_len);
+            if (buf == NULL) {
+                free_list(*head);
+                return -2;
+            }
         }
 
         buf[len++] = c;
         if (c == 10) {
             buf[len++] = 0; // NULL terminating the string
             cur->next = malloc(sizeof(*cur));
+            if (cur->next == NULL) {
+                free_list(*head);
+                return -2;
+            }
             cur = cur->next;
 
             cur->len = len;
             cur->s = malloc(len * sizeof(*(cur->s)));
+            if (cur->s == NULL) {
+                free_list(*head);
+                return -2;;
+            }
             cur->next = NULL;
             strncpy(cur->s, buf, len);
 

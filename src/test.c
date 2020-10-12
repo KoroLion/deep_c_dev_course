@@ -1,3 +1,7 @@
+/*
+Copyright 2020 KoroLion (github.com/KoroLion)
+*/
+
 #include <check.h>
 #include <stdbool.h>
 

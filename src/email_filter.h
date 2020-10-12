@@ -1,3 +1,7 @@
+/*
+Copyright 2020 KoroLion (github.com/KoroLion)
+*/
+
 #ifndef EMAIL_FILTER_H
 #define EMAIL_FILTER_H
 

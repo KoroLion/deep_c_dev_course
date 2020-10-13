@@ -10,3 +10,12 @@ addons:
       - check
       - cppcheck
       - python3-pip
+
+deploy:
+  provider: releases
+  api_key:
+    - secure: "JCFmoWYLRg93BB9qS4Wto6k3aSMk2o8zbOcTeGetI/sx60F5p2BowpkAqPNzLMSTdu5e9tExfG6wsKj7EShGED09eKwC1/pcW/5CfZpBSORA7S2lflypy2hSAovuEsVUgZcE8Xc+59o4WYMVfa+RD72eiIVyWP9DNXTC52NyVwdGqkhdqZJ1pI3yN2JXFaNKLLzZu+wRxcppiSD7XE7gCoM4r4HkZ0Wa3IYzXD4x9f5SienkBrc+SSS+MDM2fWmrWRsmm/eDNZzB9PcQV6ltRFffvRNmB+RJW7WsnqfoySNhh4dtgSnOYXP4Z+2oDfT5fJcloNDAJyfigbwazaDfUxtHiWgFiZBm96ZZsSbogja6go6YfrADXElJ8AgcWx3g5Vp1p+QmoNfLnI/n/b6QZMYbY33hJsdWclP1E2m8GZn9AnjBjUfE+PP/9usS6zforF9ZxFSE9V1bAEBfu2PHAt/RH00vIbn7nYJOwXwVjrcpp7KkaQ+dbda18iDtQa6/bM0IM25wbYqDkoIAYgUsUHFd0dKJ93hv/s4JNI3Fod9h7RvnZdJRysoYnCtQeE5phSJIFOeNABshRhRNAXDxAsp6TRdKHZm/WSa3MU0NAP2TOfdMkKtm82z5YymF0YGULgRwAr/GIpYiyEUhm1x9PBPVu6HIZ7RObCEWW+xj27s="
+  file: "test_data.txt"
+  skip_cleanup: true
+  on:
+    tags: true

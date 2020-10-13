@@ -49,11 +49,17 @@ START_TEST(has_email_test) {
     fail_unless(has_email("@@.ru", -1) == false, "email test");
     fail_unless(has_email("@test.ru asdfasd fas d", -1) == false, "email test");
     fail_unless(has_email("@", -1) == false, "email test");
+
+    fail_unless(has_email("test@restru", 100) == false, "incorrect len test");
 } END_TEST
 
 START_TEST(filter_email_test) {
     struct lnode *head = malloc(sizeof(*head));
-    int ln_amount = read_file_to_list(&head, TEST_DATA_FPATH);
+
+    int ln_amount = read_file_to_list(&head, "donotcreatemepls34@51");
+    fail_unless(ln_amount == -1, "file_not_exist");
+
+    ln_amount = read_file_to_list(&head, TEST_DATA_FPATH);
     fail_unless(ln_amount == 161, "read_big_file_to_list");
 
     struct lnode *flt_head;

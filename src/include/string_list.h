@@ -11,6 +11,7 @@ struct lnode {
     struct lnode *next;
 };
 
+bool add_to_list(struct lnode *cur, const char *s, const int len);
 int read_file_to_list(struct lnode**, const char* fpath);
 void print_list(struct lnode*);
 int free_list(struct lnode*);

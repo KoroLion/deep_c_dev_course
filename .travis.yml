@@ -18,4 +18,5 @@ deploy:
   file: "test_data.txt"
   skip_cleanup: true
   on:
+    all_branches: true
     tags: true
